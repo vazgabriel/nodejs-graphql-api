@@ -1,6 +1,6 @@
 # NodeJS GraphQL API
 
-A NodeJS API based in GraphQL. Using Typescript, MySQL, Sequelize and JWT.
+A NodeJS API based in GraphQL using Typescript, MySQL, Sequelize and JWT.
 
 ### Prerequisites
 
