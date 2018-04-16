@@ -4,18 +4,20 @@ import { handleError, throwError } from './../../../utils/utils';
 import { Transaction } from 'sequelize';
 import { GraphQLResolveInfo } from 'graphql';
 
+import { DataLoadersInterface } from './../../../interfaces/DataLoadersInterface';
+import { DbConnection } from './../../../interfaces/DbConnectionInterface';
+
 import { authResolvers } from './../../composable/auth.resolver';
 import { compose } from '../../composable/composable.resolver';
-import { DbConnection } from './../../../interfaces/DbConnectionInterface';
 import { PostInstance } from '../../../models/PostModel';
 
 export const postResolvers = {
 
   Post: {
 
-    author: (post, args, { db }: { db: DbConnection }, info: GraphQLResolveInfo) => {
-      return db.User
-        .findById(post.get('author'))
+    author: (post, args, { db, dataloaders: {userLoader} }: { db: DbConnection, dataloaders: DataLoadersInterface}, info: GraphQLResolveInfo) => {
+      return userLoader
+        .load(post.get('author'))
         .catch(handleError);
     },
 

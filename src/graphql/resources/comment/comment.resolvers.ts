@@ -1,5 +1,6 @@
 import { AuthUser } from './../../../interfaces/AuthUserInterface';
 import { CommentInstance } from './../../../models/CommentModel';
+import { DataLoadersInterface } from './../../../interfaces/DataLoadersInterface';
 import { DbConnection } from './../../../interfaces/DbConnectionInterface';
 
 import { GraphQLResolveInfo } from 'graphql';
@@ -13,15 +14,15 @@ export const commentResolvers = {
 
   Comment: {
 
-    user: (comment, args, { db }: { db: DbConnection }, info: GraphQLResolveInfo) => {
-      return db.User
-        .findById(comment.get('user'))
+    user: (comment, args, { db, dataloaders: {userLoader} }: { db: DbConnection, dataloaders: DataLoadersInterface }, info: GraphQLResolveInfo) => {
+      return userLoader
+        .load(comment.get('user'))
         .catch(handleError);
     },
 
-    post: (comment, args, { db }: { db: DbConnection }, info: GraphQLResolveInfo) => {
-      return db.Post
-        .findById(comment.get('post'))
+    post: (comment, args, { db, dataloaders: {postLoader} }: { db: DbConnection, dataloaders: DataLoadersInterface }, info: GraphQLResolveInfo) => {
+      return postLoader
+        .load(comment.get('post'))
         .catch(handleError);
     }
 
