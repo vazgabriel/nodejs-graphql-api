@@ -1,5 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const auth_resolver_1 = require("./../../composable/auth.resolver");
+const composable_resolver_1 = require("../../composable/composable.resolver");
 const utils_1 = require("../../../utils/utils");
 exports.commentResolvers = {
     Comment: {
@@ -24,50 +26,46 @@ exports.commentResolvers = {
                 },
                 limit: first,
                 offset
-            })
-                .catch(utils_1.handleError);
+            }).catch(utils_1.handleError);
         }
     },
     Mutation: {
-        createComment: (comment, { input }, { db }, info) => {
+        createComment: composable_resolver_1.compose(...auth_resolver_1.authResolvers)((comment, { input }, { db, authUser }, info) => {
             return db.sequelize.transaction((transaction) => {
                 return db.Comment
                     .create(input, {
                     transaction
                 });
-            })
-                .catch(utils_1.handleError);
-        },
-        updateComment: (comment, { id, input }, { db }, info) => {
+            }).catch(utils_1.handleError);
+        }),
+        updateComment: composable_resolver_1.compose(...auth_resolver_1.authResolvers)((comment, { id, input }, { db, authUser }, info) => {
             id = parseInt(id);
             return db.sequelize.transaction((transaction) => {
                 return db.Comment
                     .findById(id)
                     .then((comment) => {
-                    if (!comment)
-                        throw new Error(`Comment with id ${id} not found!`);
+                    utils_1.throwError(!comment, `Comment with id ${id} not found!`);
+                    utils_1.throwError(comment.get('user') != authUser.id, `Unauthorized! You can only edit comments by yourself!`);
                     return comment.update(input, {
                         transaction
                     });
                 });
-            })
-                .catch(utils_1.handleError);
-        },
-        deleteComment: (comment, { id }, { db }, info) => {
+            }).catch(utils_1.handleError);
+        }),
+        deleteComment: composable_resolver_1.compose(...auth_resolver_1.authResolvers)((comment, { id }, { db, authUser }, info) => {
             id = parseInt(id);
             return db.sequelize.transaction((transaction) => {
                 return db.Comment
                     .findById(id)
                     .then((comment) => {
-                    if (!comment)
-                        throw new Error(`Comment with id ${id} not found!`);
+                    utils_1.throwError(!comment, `Comment with id ${id} not found!`);
+                    utils_1.throwError(comment.get('user') != authUser.id, `Unauthorized! You can only delete comments by yourself!`);
                     return comment.destroy({
                         transaction
                     })
                         .then(comment => !!comment);
                 });
-            })
-                .catch(utils_1.handleError);
-        }
+            }).catch(utils_1.handleError);
+        })
     }
 };
