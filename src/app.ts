@@ -1,5 +1,8 @@
+import * as compression from 'compression';
+import * as cors from 'cors';
 import { DataLoaderFactory } from './graphql/dataloaders/DataLoaderFactory';
 import * as express from 'express';
+import * as helmet from 'helmet';
 import * as graphqlHTTP from 'express-graphql';
 
 import db from './models';
@@ -18,7 +21,7 @@ class App {
     this.express = express();
     this.init();
   }
-  
+
   private init(): void {
     this.requestedFields = new RequestedFields();
     this.dataLoaderFactory = new DataLoaderFactory(db, this.requestedFields);
@@ -26,7 +29,19 @@ class App {
   }
 
   private middleware(): void {
-    
+
+    this.express.use(cors({
+      origin: '*',
+      methods: ['POST', 'GET'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'Accept-Encoding'],
+      preflightContinue: false,
+      optionsSuccessStatus: 204
+    }));
+
+    this.express.use(compression());
+
+    this.express.use(helmet());
+
     this.express.use('/graphql',
 
       extractJwtMiddleware(),

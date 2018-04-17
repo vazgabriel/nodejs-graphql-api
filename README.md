@@ -33,6 +33,14 @@ To run the project tests is very simple
 npm test
 ```
 
+### You can also see the test coverage
+
+```
+npm run coverage
+```
+
+It will create a directory in root folder called "coverage" with a detailed Web page.
+
 ## Run project as Development
 
 To run project as development mode, you just run following commands in two different terminals.
@@ -52,9 +60,19 @@ npm run dev
 To run project as production mode, you just run following command.
 
 ```
-npm run prod
+npm start
 ```
 
 ## Authors
 
 * **Gabriel Vaz** - [GitHub](https://github.com/vazgabriel)
+
+## Contributors
+
+This app was created during a "Udemy Course"
+
+[Criando API's com Node.js, GraphQL, JWT, Sequelize e TS](https://www.udemy.com/criando-apis-com-nodejs-graphql-jwt-e-sequelize/)
+
+## Extra Details
+
+This app isn't finished, is just for learning and training.
