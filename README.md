@@ -30,7 +30,7 @@ To run the project tests is very simple
 ### Check all dependencies is installed
 
 ```
-npm run test
+npm test
 ```
 
 ## Run project as Development

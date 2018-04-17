@@ -1,6 +1,7 @@
-import { DataLoadersInterface } from './DataLoadersInterface';
 import { AuthUser } from './AuthUserInterface';
+import { DataLoadersInterface } from './DataLoadersInterface';
 import { DbConnection } from './DbConnectionInterface';
+import { RequestedFields } from './../graphql/ast/RequestedFields';
 
 export interface ResolverContext {
 
@@ -8,5 +9,6 @@ export interface ResolverContext {
   authorization?: string;
   authUser?: AuthUser;
   dataloaders?: DataLoadersInterface;
+  requestedFields?: RequestedFields
 
 };

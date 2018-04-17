@@ -29,10 +29,10 @@ if (!db) {
 
   fs
     .readdirSync(__dirname)
-    .filter((file: string) => (
-      file.indexOf('.') !== 0 &&
-      file !== basename &&
-      file.slice(-3) === '.js'))
+    .filter((file: string) => {
+      const fileSlice: string = file.slice(-3);
+      return (file.indexOf('.') !== 0) && (file !== basename) && ((fileSlice === '.js' || fileSlice === '.ts'));
+    })
     .forEach((file: string) => {
       const model = sequelize.import(path.join(__dirname, file));
       db[model['name']] = model;
@@ -48,4 +48,4 @@ if (!db) {
 
 }
 
-export default < DbConnection > db;
+export default <DbConnection>db;

@@ -1,3 +1,4 @@
+import { ResolverContext } from './../../../interfaces/ResolverContextInterface';
 import { AuthUser } from './../../../interfaces/AuthUserInterface';
 import { CommentInstance } from './../../../models/CommentModel';
 import { DataLoadersInterface } from './../../../interfaces/DataLoadersInterface';
@@ -14,15 +15,15 @@ export const commentResolvers = {
 
   Comment: {
 
-    user: (comment, args, { db, dataloaders: {userLoader} }: { db: DbConnection, dataloaders: DataLoadersInterface }, info: GraphQLResolveInfo) => {
+    user: (comment, args, { db, dataloaders: { userLoader } }: { db: DbConnection, dataloaders: DataLoadersInterface }, info: GraphQLResolveInfo) => {
       return userLoader
-        .load(comment.get('user'))
+        .load({ key: comment.get('user'), info })
         .catch(handleError);
     },
 
-    post: (comment, args, { db, dataloaders: {postLoader} }: { db: DbConnection, dataloaders: DataLoadersInterface }, info: GraphQLResolveInfo) => {
+    post: (comment, args, { db, dataloaders: { postLoader } }: { db: DbConnection, dataloaders: DataLoadersInterface }, info: GraphQLResolveInfo) => {
       return postLoader
-        .load(comment.get('post'))
+        .load({ key: comment.get('post'), info })
         .catch(handleError);
     }
 
@@ -30,15 +31,16 @@ export const commentResolvers = {
 
   Query: {
 
-    commentsByPost: (comment, { postId, first = 10, offset = 0 }, { db }: { db: DbConnection }, info: GraphQLResolveInfo) => {
+    commentsByPost: (comment, { postId, first = 10, offset = 0 }, context: ResolverContext, info: GraphQLResolveInfo) => {
       postId = parseInt(postId);
-      return db.Comment
+      return context.db.Comment
         .findAll({
           where: {
             post: postId
           },
           limit: first,
-          offset
+          offset,
+          attributes: context.requestedFields.getFields(info)
         }).catch(handleError);
     }
 
